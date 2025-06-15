@@ -1,0 +1,378 @@
+/* Reset e estilos gerais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    flex-direction: column;
+  }
+  
+  /* Header e Logo */
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  
+  .header__logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .header__logo-image {
+    width: 300px;
+    height: auto;
+  }
+  
+  .header__logo-title {
+    font-size: 24px;
+    color: #1e3a8a;
+    margin-top: 10px;
+  }
+  
+  /* Componente de Login */
+  .login {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+    display: block;
+  }
+  
+  .login__title {
+    margin-bottom: 20px;
+    color: #1e3a8a;
+  }
+  
+  .login__input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .login__button {
+    width: 100%;
+    padding: 10px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+  }
+  
+  .login__button:hover {
+    background: #b91c1c;
+  }
+  
+  .login__forgot-password {
+    margin-top: 10px;
+    color: #1e3a8a;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  /* Componente Principal */
+  .main {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .main__title {
+    color: #1e3a8a;
+    margin-bottom: 20px;
+  }
+  
+  /* Componente de Eventos */
+  .events {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    margin: 20px auto;
+  }
+  
+  .events__title {
+    color: #1e3a8a;
+    margin-bottom: 10px;
+  }
+  
+  .events__description {
+    margin-bottom: 15px;
+  }
+  
+  .events__icon {
+    cursor: pointer;
+    width: 50px;
+    height: auto;
+    transition: transform 0.3s ease;
+  }
+  
+  .events__icon:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Componente de Marcar Eventos */
+  .mark-events {
+    display: none;
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .mark-events__button {
+    padding: 10px;
+    background: #1e3a8a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+  }
+  
+  .mark-events__button:hover {
+    background: #152a61;
+  }
+  
+  /* Dashboard */
+  .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+  }
+  
+  .dashboard__card {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .dashboard__card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Events Preview Card */
+  .events-preview {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+  }
+  
+  .events-preview__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+  }
+  
+  .events-preview__title {
+      color: #1e40af;
+      font-size: 24px;
+      font-weight: 600;
+  }
+  
+  .events-preview__stats {
+      display: flex;
+      gap: 15px;
+  }
+  
+  .stat-item {
+      text-align: center;
+  }
+  
+  .stat-item__number {
+      display: block;
+      font-size: 24px;
+      font-weight: 700;
+      color: #1e40af;
+  }
+  
+  .stat-item__label {
+      font-size: 12px;
+      color: #64748b;
+  }
+  
+  .events-preview__description {
+      color: #64748b;
+      font-size: 16px;
+      line-height: 1.5;
+  }
+  
+  .events-preview__calendar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 0;
+  }
+  
+  .calendar-icon {
+      width: 100px;
+      height: 100px;
+      background: #f8fafc;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+  }
+  
+  .calendar-icon:hover {
+      transform: scale(1.05);
+  }
+  
+  .calendar-icon__header {
+      background: #1e40af;
+      color: white;
+      text-align: center;
+      padding: 4px;
+      font-size: 14px;
+      font-weight: 500;
+  }
+  
+  .calendar-icon__body {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+  
+  .calendar-icon__body i {
+      font-size: 40px;
+      color: #1e40af;
+  }
+  
+  .events-preview__button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px;
+      background: #1e40af;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+  }
+  
+  .events-preview__button:hover {
+      background: #1e3a8a;
+  }
+  
+  .events-preview__button:hover i {
+      transform: translateX(5px);
+  }
+  
+  .events-preview__button i {
+      transition: transform 0.3s ease;
+  }
+  
+  /* Quick Actions Card */
+  .quick-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+  }
+  
+  .quick-actions__title {
+      color: #1e40af;
+      font-size: 24px;
+      font-weight: 600;
+  }
+  
+  .quick-actions__grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      flex: 1;
+  }
+  
+  .quick-action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 20px;
+      background: #f8fafc;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+  }
+  
+  .quick-action:hover {
+      background: #1e40af15;
+      transform: translateY(-3px);
+  }
+  
+  .quick-action i {
+      font-size: 24px;
+      color: #1e40af;
+  }
+  
+  .quick-action span {
+      color: #1e40af;
+      font-size: 14px;
+      font-weight: 500;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .header__logo-image {
+      width: 200px;
+    }
+  
+    .login,
+    .events {
+      width: 90%;
+    }
+  
+      .dashboard {
+          grid-template-columns: 1fr;
+      }
+  
+      .events-preview__header {
+          flex-direction: column;
+          gap: 15px;
+      }
+  
+      .events-preview__stats {
+          width: 100%;
+          justify-content: space-around;
+      }
+  
+      .quick-actions__grid {
+          grid-template-columns: repeat(2, 1fr);
+      }
+  }
+  

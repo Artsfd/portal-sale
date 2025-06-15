@@ -1,0 +1,315 @@
+/* Reset e estilos gerais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Header e Logo */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px;
+}
+
+.header__logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header__logo-image {
+    width: 250px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.header__logo-title {
+    font-size: 28px;
+    color: #1e40af;
+    font-weight: 700;
+}
+
+/* Página de Eventos */
+.events-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.events-page__header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.events-page__title {
+    color: #1e40af;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+/* Filtros */
+.events-page__filters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.filter-button {
+    padding: 8px 16px;
+    border: 2px solid #1e40af;
+    border-radius: 20px;
+    background: transparent;
+    color: #1e40af;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.filter-button:hover {
+    background: #1e40af15;
+}
+
+.filter-button.active {
+    background: #1e40af;
+    color: white;
+}
+
+/* Lista de Eventos */
+.events-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+/* Card de Evento */
+.event-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.event-card__category {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.event-card__category--palestra {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.event-card__category--workshop {
+    background: #e0e7ff;
+    color: #4f46e5;
+}
+
+.event-card__category--seminario {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.event-card__content {
+    padding: 20px;
+}
+
+.event-card__title {
+    color: #1e40af;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.event-card__description {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.event-card__details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.event-card__detail {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.event-card__detail i {
+    color: #1e40af;
+    width: 16px;
+}
+
+/* Botão de delete */
+.event-card__delete-button {
+    top: 12px;
+    left: 12px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    transition: background-color 0.3s ease;
+    z-index: 10;
+}
+
+.event-card__delete-button:hover {
+    background-color: #c0392b;
+}
+
+.event-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.event-card__status {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.event-card__status--available {
+    color: #16a34a;
+}
+
+.event-card__status--limited {
+    color: #ea580c;
+}
+
+.event-card__button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #1e40af;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.event-card__button:hover {
+    background: #1e3a8a;
+    transform: translateX(3px);
+}
+
+.event-card__button i {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+.event-card__button:hover i {
+    transform: translateX(3px);
+}
+
+/* Botão Voltar */
+.events-page__back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #1e40af;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin: 0 auto;
+}
+
+.events-page__back-button:hover {
+    background: #1e3a8a;
+    transform: translateX(-3px);
+}
+
+.events-page__back-button i {
+    font-size: 14px;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.event-card {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .header__logo-image {
+        width: 200px;
+    }
+    
+    .events-page {
+        padding: 10px;
+    }
+    
+    .events-page__title {
+        font-size: 24px;
+    }
+    
+    .events-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-button {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+}

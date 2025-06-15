@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Cursos</title>
+    <link rel="stylesheet" href="cadastro.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="header__logo">
+            <img class="header__logo-image" src="../imagens/portalsale.png" alt="Logo Salesiano">
+            <h1 class="header__logo-title">Portal Salê</h1>
+        </div>
+    </div>
+
+    <div class="cadastro">
+        <h2 class="cadastro__title">Cadastro de Eventos
+        </h2>
+        <form class="cadastro__form" id="eventoForm">
+            <input type="text" class="cadastro__input" id="evento" placeholder="Nome do Evento" required>
+            <input type="text" class="cadastro__input" id="nomePalestrante" placeholder="Nome do Professor/Palestrante"
+                required>
+            <textarea class="cadastro__textarea" id="descricaoPalestra" placeholder="Descrição sobre a Palestra"
+                required></textarea>
+            <input type="datetime-local" class="cadastro__input" id="dataHora" required>
+            <input type="text" class="cadastro__input" id="localPalestra" placeholder="Local" required>
+            <input type="number" class="cadastro__input" id="vagas" placeholder="Capacidade" required>
+            <select id="tipoEvento" class="cadastro__input">
+                <option value="palestra">Palestra</option>
+                <option value="workshop">Workshop</option>
+                <option value="seminario">Seminário</option>
+            </select>
+            <button type="submit" class="cadastro__button">Cadastrar Curso</button>
+        </form>
+        <div class="cadastro__actions">
+            <button class="cadastro__back-button" id="backButton">Voltar</button>
+        </div>
+    </div>
+
+    <script src="cadastro.js"></script>
+</body>
+
+</html>

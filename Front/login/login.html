@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Eventos</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="header">
+        <div class="header__logo">
+            <img class="header__logo-image" src="../imagens/portalsale.png" alt="Logo Salesiano">
+            <h1 class="header__logo-title">Portal Salê</h1>
+        </div>
+    </div>
+
+    <div class="login">
+        <h2 class="login__title">Login</h2>
+        <input type="text" id="matricula" class="login__input" placeholder="Número de Matrícula" required>
+        <input type="password" id="senha" class="login__input" placeholder="Senha" required>
+        <button class="login__button" id="loginButton">Entrar</button>
+        <div class="login__forgot-password" id="forgotPassword">Esqueci minha senha</div>
+    </div>
+
+    <div class="main">
+        <h2 class="main__title">Bem-vindo ao Portal de Eventos</h2>
+        <div class="dashboard">
+            <div class="dashboard__card events-preview">
+                <div class="events-preview__header">
+                    <h3 class="events-preview__title">Eventos Disponíveis</h3>
+                    <div class="events-preview__stats">
+                        <div class="stat-item">
+                            <span class="stat-item__number">{{numeroEventosElement}}</span>
+                            <span class="stat-item__label">Eventos Ativos</span>
+                        </div>
+                          
+                    </div>
+                </div>
+                <p class="events-preview__description">
+                    Explore nossa programação completa de eventos, palestras e workshops.
+                </p>
+                <div class="events-preview__calendar">
+                    <div class="calendar-icon">
+                        <div class="calendar-icon__header">2025</div>
+                        <div class="calendar-icon__body">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                    </div>
+                </div>
+                <button class="events-preview__button" id="calendarIcon">
+                    <span>Ver Todos os Eventos</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="dashboard__card quick-actions">
+                <h3 class="quick-actions__title">Ações Rápidas</h3>
+                <div class="quick-actions__grid">
+                    <button class="quick-action" id="markEventsButton">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Marcar Eventos</span>
+                    </button>
+                    <button class="quick-action">
+                        <i class="fas fa-certificate"></i>
+                        <span>Certificados</span>
+                    </button>
+                    <button class="quick-action">
+                        <i class="fas fa-history"></i>
+                        <span>Histórico</span>
+                    </button>
+                    <button class="quick-action">
+                        <i class="fas fa-star"></i>
+                        <span>Favoritos</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>
+
