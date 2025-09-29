@@ -216,12 +216,14 @@ function excluirEvento(eventoId) {
 /**
  * Volta para a página inicial
  */
-function voltarParaInicio() {
-  window.location.href = "../login/login.html"
-}
-
-// Event Listeners
-backButton.addEventListener("click", voltarParaInicio)
+document.addEventListener("DOMContentLoaded", () => {
+  const backButton = document.getElementById("backButton");
+  if (backButton) {
+    backButton.addEventListener("click", () => {
+      window.location.href = "../login/login.html#dashboard";
+    });
+  }
+});
 
 // Configuração dos filtros
 filterButtons.forEach((button) => {

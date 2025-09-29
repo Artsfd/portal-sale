@@ -47,20 +47,20 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify(evento)
         })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => { throw new Error(text); });
-            }
-            return response.json();
-        })
-        .then(data => {
-            alert("Cadastro efetuado!");
-            formCadastro.reset();
-        })
-        .catch(error => {
-            console.error("Erro ao cadastrar usuário: ", error);
-            alert("Falha ao cadastrar usuário");
-        });
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.mensagem); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.mensagem);
+                formCadastro.reset();
+            })
+            .catch(error => {
+                console.error("Erro ao cadastrar usuário: ", error.message);
+                alert(error.message);
+            });
     });
 });
 

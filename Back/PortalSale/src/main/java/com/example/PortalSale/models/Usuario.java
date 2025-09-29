@@ -36,4 +36,11 @@ public class Usuario {
 
     public String getSenha() { return senha; }
     public void setSenha(String senha) { this.senha = senha; }
+    
+    public String getRa() {
+        return ra;
+    }
+    public void setRa(String ra) {
+        this.ra = ra;
+    }
 }
