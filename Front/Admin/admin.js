@@ -1,6 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
   const eventosList = document.getElementById("eventosList");
   const usuariosList = document.getElementById("usuariosList");
+
+  const detalhesEventoNome = document.getElementById("eventoNome");
+  const detalhesEventoPalestrante = document.getElementById("eventoPalestrante");
+  const detalhesEventoDescricao = document.getElementById("eventoDescricao");
+  const detalhesEventoDataHora = document.getElementById("eventoDataHora");
+  const detalhesEventoLocal = document.getElementById("eventoLocal");
+
   const criarEventoButton = document.getElementById("criarEventoButton");
 
   // 🔒 Verifica se o usuário logado é admin
@@ -16,10 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(res => res.json())
     .then(eventos => {
       eventosList.innerHTML = eventos.map(e => `
-        <div class="evento-item">
-          <strong>${e.nome}</strong> - ${e.dataHora} <br>
-          <button onclick="verInscritos(${e.id})">Ver Inscritos</button>
-          <button onclick="excluirEvento(${e.id})">Excluir</button>
+        <div class="evento-item" onclick="mostrarDetalhesEvento(${e.id})">
+          <strong>${e.nome}</strong> - ${e.dataHora}
         </div>
       `).join("");
     });
@@ -28,22 +33,27 @@ document.addEventListener("DOMContentLoaded", () => {
   criarEventoButton.addEventListener("click", () => {
     window.location.href = "../cadastro/cadastro.html#dashboard";
   });
-});
 
-function verInscritos(eventoId) {
-  fetch(`http://localhost:8080/eventos/${eventoId}/inscritos`)
-    .then(res => res.json())
-    .then(usuarios => {
-      const usuariosList = document.getElementById("usuariosList");
-      usuariosList.innerHTML = usuarios.map(u => `
-        <div>${u.nome} (${u.ra})</div>
-      `).join("");
-    });
-}
+  // Funções globais para acesso pelo onclick
+  window.mostrarDetalhesEvento = function(eventoId) {
+    // Buscar detalhes do evento
+    fetch(`http://localhost:8080/eventos/${eventoId}`)
+      .then(res => res.json())
+      .then(e => {
+        detalhesEventoNome.textContent = `Nome: ${e.nome}`;
+        detalhesEventoPalestrante.textContent = `Palestrante: ${e.palestrante}`;
+        detalhesEventoDescricao.textContent = `Descrição: ${e.descricao}`;
+        detalhesEventoDataHora.textContent = `Data/Hora: ${e.dataHora}`;
+        detalhesEventoLocal.textContent = `Local: ${e.local}`;
+      });
 
-function excluirEvento(id) {
-  if (confirm("Tem certeza que deseja excluir este evento?")) {
-    fetch(`http://localhost:8080/eventos/${id}`, { method: "DELETE" })
-      .then(() => window.location.reload());
+    // Buscar usuários inscritos
+    fetch(`http://localhost:8080/eventos/${eventoId}/inscritos`)
+      .then(res => res.json())
+      .then(usuarios => {
+        usuariosList.innerHTML = usuarios.map(u => `
+          <div>${u.nome} (${u.ra})</div>
+        `).join("");
+      });
   }
-}
+});

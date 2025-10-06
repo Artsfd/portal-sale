@@ -18,7 +18,8 @@ function validarLogin() {
   fetch("http://localhost:8080/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ra: ra, senha: senha })
+    body: JSON.stringify({ ra: ra, senha: senha }),
+    credentials: "include"
   })
     .then(response => {
       if (!response.ok) {
@@ -27,18 +28,23 @@ function validarLogin() {
       return response.json();
     })
     .then(usuario => {
+      localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+      
+      console.log("🟢 Retorno do login:", JSON.stringify(usuario, null, 2)); // log completo e formatado
+
       mostrarMensagem("Login realizado com sucesso!");
+
       if (usuario.role && usuario.role.toUpperCase() === "ADMIN") {
-        window.location.href = "../admin/admin.html";
+        setTimeout(() => {
+          window.location.href = "../admin/admin.html";
+        }, 1500);
       } else {
         mostrarPainelPrincipal();
         window.location.hash = "dashboard";
       }
     })
-    .catch(error => {
-      mostrarMensagem(error.message || "Erro ao realizar login.");
-    });
 }
+
 
 /**
  * Exibe uma mensagem para o usuário

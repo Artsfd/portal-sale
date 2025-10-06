@@ -12,14 +12,38 @@
   </header>
 
   <main>
+    <!-- Seção de Eventos -->
     <section id="eventosSection">
       <h2>Eventos Cadastrados</h2>
       <div id="eventosList"></div>
     </section>
 
+    <!-- Seção de Detalhes do Evento -->
+    <section id="detalhesEventoSection">
+      <h2>Detalhes do Evento</h2>
+      <div id="detalhesEvento">
+        <p id="eventoNome"></p>
+        <p id="eventoPalestrante"></p>
+        <p id="eventoDescricao"></p>
+        <p id="eventoDataHora"></p>
+        <p id="eventoLocal"></p>
+      </div>
+    </section>
+
+    <!-- Seção de Usuários Inscritos -->
     <section id="usuariosSection">
       <h2>Usuários Inscritos</h2>
-      <div id="usuariosList"></div>
+      <table id="usuariosList" border="1">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>RA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Usuários cadastrados aparecerão aqui via JS -->
+        </tbody>
+      </table>
     </section>
 
     <button id="criarEventoButton">Criar Novo Evento</button>

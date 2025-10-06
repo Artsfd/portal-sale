@@ -1,30 +1,40 @@
 package com.example.PortalSale.controllers;
 
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.PortalSale.models.Usuario;
 import com.example.PortalSale.repository.UsuarioRepository;
 
 import jakarta.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*") // para permitir chamadas do frontend
+@CrossOrigin(
+    origins = {"http://localhost:5500", "http://127.0.0.1:5500"},
+    allowCredentials = "true"
+)
 public class LoginController {
 
     @Autowired
     private UsuarioRepository ur;
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUsuario(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> loginUsuario(@RequestBody Usuario usuario, HttpSession session) {
         Usuario usuarioLogado = ur.login(usuario.getRa(), usuario.getSenha());
 
         if (usuarioLogado != null) {
+            // ✅ Guarda o usuário logado na sessão
+            session.setAttribute("usuarioLogado", usuarioLogado);
+
             return ResponseEntity.ok(Map.of(
                 "id", usuarioLogado.getId(),
                 "nome", usuarioLogado.getNome(),
