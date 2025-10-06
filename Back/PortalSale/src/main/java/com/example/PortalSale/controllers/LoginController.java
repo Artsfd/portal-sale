@@ -2,6 +2,9 @@ package com.example.PortalSale.controllers;
 
 import com.example.PortalSale.models.Usuario;
 import com.example.PortalSale.repository.UsuarioRepository;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +25,14 @@ public class LoginController {
         Usuario usuarioLogado = ur.login(usuario.getRa(), usuario.getSenha());
 
         if (usuarioLogado != null) {
-            return ResponseEntity.ok(usuarioLogado);
+            return ResponseEntity.ok(Map.of(
+                "id", usuarioLogado.getId(),
+                "nome", usuarioLogado.getNome(),
+                "ra", usuarioLogado.getRa(),
+                "role", usuarioLogado.getRole()
+            ));
         } else {
-            return ResponseEntity
-                    .status(401)
-                    .body(Map.of("mensagem", "Matrícula ou senha inválidas."));
+            return ResponseEntity.status(401).body(Map.of("mensagem", "Credenciais inválidas"));
         }
     }
 

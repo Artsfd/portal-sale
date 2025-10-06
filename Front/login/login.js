@@ -28,8 +28,12 @@ function validarLogin() {
     })
     .then(usuario => {
       mostrarMensagem("Login realizado com sucesso!");
-      mostrarPainelPrincipal(); // mostra o painel direto
-      window.location.hash = "dashboard"; // marca no hash para manter estado
+      if (usuario.role && usuario.role.toUpperCase() === "ADMIN") {
+        window.location.href = "../admin/admin.html";
+      } else {
+        mostrarPainelPrincipal();
+        window.location.hash = "dashboard";
+      }
     })
     .catch(error => {
       mostrarMensagem(error.message || "Erro ao realizar login.");

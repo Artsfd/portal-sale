@@ -2,12 +2,13 @@ package com.example.PortalSale.models;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Entity //Indica que essa classe será tratada como uma entidade no banco
+@Entity
 @Table(name = "eventos")
 public class Evento {
-    @Id //Define a PK
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento do ID
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nome;
@@ -17,12 +18,20 @@ public class Evento {
     private String local;
     private String tipoEvento;
     private int vagas;
-    private int inscritos;
 
-    public Evento() {
-    }
+    // 🔥 Agora o campo "inscritos" é uma lista de usuários
+    @ManyToMany
+    @JoinTable(
+        name = "inscricoes",
+        joinColumns = @JoinColumn(name = "evento_id"),
+        inverseJoinColumns = @JoinColumn(name = "usuario_id")
+    )
+    private List<Usuario> inscritos;
 
-    public Evento(Long id, String nome, String palestrante, String descricao, LocalDateTime dataHora, String local, String tipoEvento, int vagas, int inscritos) {
+    public Evento() {}
+
+    public Evento(Long id, String nome, String palestrante, String descricao,
+                  LocalDateTime dataHora, String local, String tipoEvento, int vagas) {
         this.id = id;
         this.nome = nome;
         this.palestrante = palestrante;
@@ -31,78 +40,33 @@ public class Evento {
         this.local = local;
         this.tipoEvento = tipoEvento;
         this.vagas = vagas;
-        this.inscritos = inscritos;
     }
 
-    public Long getId() {
-        return id;
-    }
+    // Getters e setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
-    public String getNome() {
-        return nome;
-    }
+    public String getPalestrante() { return palestrante; }
+    public void setPalestrante(String palestrante) { this.palestrante = palestrante; }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 
-    public String getDescricao() {
-        return descricao;
-    }
+    public LocalDateTime getDataHora() { return dataHora; }
+    public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
+    public String getLocal() { return local; }
+    public void setLocal(String local) { this.local = local; }
 
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
+    public String getTipoEvento() { return tipoEvento; }
+    public void setTipoEvento(String tipoEvento) { this.tipoEvento = tipoEvento; }
 
-    public void setDataHora(LocalDateTime dataHora) {
-        this.dataHora = dataHora;
-    }
+    public int getVagas() { return vagas; }
+    public void setVagas(int vagas) { this.vagas = vagas; }
 
-    public String getLocal() {
-        return local;
-    }
-
-    public void setLocal(String local) {
-        this.local = local;
-    }
-
-    public String getPalestrante() {
-        return palestrante;
-    }
-
-    public void setPalestrante(String palestrante) {
-        this.palestrante = palestrante;
-    }
-
-    public String getTipoEvento() {
-        return tipoEvento;
-    }
-
-    public void setTipoEvento(String tipoEvento) {
-        this.tipoEvento = tipoEvento;
-    }
-
-    public int getVagas() {
-        return vagas;
-    }
-
-    public void setVagas(int vagas) {
-        this.vagas = vagas;
-    }
-
-    public int getInscritos() {
-        return inscritos;
-    }
-
-    public void setInscritos(int inscritos) {
-        this.inscritos = inscritos;
-    }
+    public List<Usuario> getInscritos() { return inscritos; }
+    public void setInscritos(List<Usuario> inscritos) { this.inscritos = inscritos; }
 }
