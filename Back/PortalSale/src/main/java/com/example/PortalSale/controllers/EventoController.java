@@ -1,6 +1,8 @@
 package com.example.PortalSale.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -21,10 +23,7 @@ import com.example.PortalSale.services.EventoService;
 
 import jakarta.servlet.http.HttpSession;
 
-@CrossOrigin(
-        origins = {"http://localhost:5500", "http://127.0.0.1:5500"},
-        allowCredentials = "true"
-)
+@CrossOrigin(origins = { "http://localhost:5500", "http://127.0.0.1:5500" }, allowCredentials = "true")
 @RestController
 @RequestMapping("/eventos")
 public class EventoController {
@@ -46,12 +45,6 @@ public class EventoController {
         return evento.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{id}/inscritos")
-    public ResponseEntity<List<Usuario>> listarInscritos(@PathVariable Long id) {
-        List<Usuario> inscritos = eventoService.buscarInscritosPorEvento(id);
-        return ResponseEntity.ok(inscritos);
-    }
-
     @PostMapping
     public Evento criarEvento(@RequestBody Evento evento) {
         return eventoService.salvarEvento(evento);
@@ -68,7 +61,7 @@ public class EventoController {
         return eventoService.buscarPorNome(nome);
     }
 
-    // 🔒 Página de admin (só acessível se for ADMIN)
+    // ✅ Endpoint para ADMIN (se quiser validar role futuramente)
     @GetMapping("/admin")
     public String adminPage(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
@@ -86,7 +79,27 @@ public class EventoController {
         return "admin"; // renderiza o arquivo admin.html
     }
 
-    // 🔹 Novo endpoint: Inscrever usuário em evento
+    // ✅ Endpoint para buscar evento + inscritos (corrigido)
+    @GetMapping("/{id}/inscritos")
+    public ResponseEntity<Map<String, Object>> getEventoComInscritos(@PathVariable Long id) {
+        Optional<Evento> eventoOpt = eventoService.buscarEventoPorId(id);
+        if (eventoOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Evento evento = eventoOpt.get();
+        List<Usuario> inscritos = evento.getInscritos(); // precisa existir getInscritos() no model Evento
+
+        Map<String, Object> resposta = new HashMap<>();
+        resposta.put("id", evento.getId());
+        resposta.put("nome", evento.getNome());
+        resposta.put("dataHora", evento.getDataHora());
+        resposta.put("descricao", evento.getDescricao());
+        resposta.put("inscritos", inscritos);
+
+        return ResponseEntity.ok(resposta);
+    }
+
     @PostMapping("/{id}/inscrever")
     public ResponseEntity<?> inscreverUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
         Optional<Evento> eventoOpt = eventoService.buscarEventoPorId(id);
@@ -96,22 +109,16 @@ public class EventoController {
 
         Evento evento = eventoOpt.get();
 
-        // Verifica se o usuário já está inscrito
         boolean jaInscrito = evento.getInscritos().stream()
                 .anyMatch(u -> u.getId() == usuario.getId());
 
         if (jaInscrito) {
-            return ResponseEntity.badRequest().body(
-                    "Usuário já está inscrito neste evento."
-            );
+            return ResponseEntity.badRequest().body("Usuário já está inscrito neste evento.");
         }
 
-        // Adiciona usuário à lista de inscritos
         evento.getInscritos().add(usuario);
         eventoService.salvarEvento(evento);
 
-        return ResponseEntity.ok(
-                "Inscrição realizada com sucesso no evento: " + evento.getNome()
-        );
+        return ResponseEntity.ok("Inscrição realizada com sucesso no evento: " + evento.getNome());
     }
 }

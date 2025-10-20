@@ -1,54 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Painel do Administrador</title>
-  <link rel="stylesheet" href="../styles/admin.css">
+  <link rel="stylesheet" href="admin.css">
+  <script src="admin.js" defer></script>
 </head>
 <body>
-  <header>
-    <h1>Painel do Administrador</h1>
-    <button id="logoutButton">Sair</button>
-  </header>
+  <h1>Painel do Administrador</h1>
 
-  <main>
-    <!-- Seção de Eventos -->
-    <section id="eventosSection">
-      <h2>Eventos Cadastrados</h2>
-      <div id="eventosList"></div>
-    </section>
+  <button id="criarEventoButton">Criar Novo Evento</button>
 
-    <!-- Seção de Detalhes do Evento -->
-    <section id="detalhesEventoSection">
-      <h2>Detalhes do Evento</h2>
-      <div id="detalhesEvento">
-        <p id="eventoNome"></p>
-        <p id="eventoPalestrante"></p>
-        <p id="eventoDescricao"></p>
-        <p id="eventoDataHora"></p>
-        <p id="eventoLocal"></p>
-      </div>
-    </section>
+  <section>
+    <h2>Eventos Cadastrados</h2>
+    <div id="eventosList"></div>
+  </section>
 
-    <!-- Seção de Usuários Inscritos -->
-    <section id="usuariosSection">
-      <h2>Usuários Inscritos</h2>
-      <table id="usuariosList" border="1">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>RA</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Usuários cadastrados aparecerão aqui via JS -->
-        </tbody>
-      </table>
-    </section>
+  <section id="detalhesEvento">
+    <h2>Detalhes do Evento</h2>
+    <p id="eventoNome"></p>
+    <p id="eventoPalestrante"></p>
+    <p id="eventoDescricao"></p>
+    <p id="eventoDataHora"></p>
+    <p id="eventoLocal"></p>
+  </section>
 
-    <button id="criarEventoButton">Criar Novo Evento</button>
-  </main>
-
-  <script src="admin.js"></script>
+  <section id="usuariosInscritos">
+    <h3>Usuários Inscritos</h3>
+    <div id="usuariosList"></div>
+  </section>
 </body>
 </html>
