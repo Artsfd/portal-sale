@@ -1,7 +1,15 @@
 package com.example.PortalSale.models;
 
+import java.util.ArrayList;
 import java.util.List;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 
 @Entity
@@ -13,7 +21,7 @@ public class Usuario {
     private long id;
 
     @ManyToMany(mappedBy = "inscritos")
-    private List<Evento> eventosInscritos;
+    private List<Evento> eventosInscritos = new ArrayList<>();
 
     @NotEmpty
     private String nome;

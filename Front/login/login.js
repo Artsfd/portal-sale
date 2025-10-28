@@ -28,9 +28,13 @@ function validarLogin() {
       return response.json();
     })
     .then(usuario => {
+      // Salva o usuário completo
       localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
-      
-      console.log("🟢 Retorno do login:", JSON.stringify(usuario, null, 2)); // log completo e formatado
+
+      // Salva o ID do usuário separadamente (necessário para eventos)
+      localStorage.setItem("usuarioId", usuario.id); // 🆕 adiciona isso
+
+      console.log("🟢 Retorno do login:", JSON.stringify(usuario, null, 2));
 
       mostrarMensagem("Login realizado com sucesso!");
 
@@ -43,6 +47,7 @@ function validarLogin() {
         window.location.hash = "dashboard";
       }
     })
+
 }
 
 

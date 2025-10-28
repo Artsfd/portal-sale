@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,20 +17,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.PortalSale.models.Evento;
-import com.example.PortalSale.models.Usuario;
+import com.example.PortalSale.repository.UsuarioRepository;
 import com.example.PortalSale.services.EventoService;
 
-import jakarta.servlet.http.HttpSession;
-
-@CrossOrigin(origins = { "http://localhost:5500", "http://127.0.0.1:5500" }, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:5500", "http://127.0.0.1:5500"}, allowCredentials = "true")
 @RestController
 @RequestMapping("/eventos")
 public class EventoController {
 
     private final EventoService eventoService;
+    private final UsuarioRepository usuarioRepository;
 
-    public EventoController(EventoService eventoService) {
+    public EventoController(EventoService eventoService, UsuarioRepository usuarioRepository) {
         this.eventoService = eventoService;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @GetMapping
@@ -61,64 +60,45 @@ public class EventoController {
         return eventoService.buscarPorNome(nome);
     }
 
-    // ✅ Endpoint para ADMIN (se quiser validar role futuramente)
-    @GetMapping("/admin")
-    public String adminPage(HttpSession session, Model model) {
-        Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
-
-        if (usuario == null) {
-            return "redirect:/login";
-        }
-
-        if (!"ADMIN".equals(usuario.getRole())) {
-            return "redirect:/home"; // redireciona se não for admin
-        }
-
-        model.addAttribute("usuario", usuario);
-        model.addAttribute("eventos", eventoService.listarEventos());
-        return "admin"; // renderiza o arquivo admin.html
-    }
-
-    // ✅ Endpoint para buscar evento + inscritos (corrigido)
     @GetMapping("/{id}/inscritos")
     public ResponseEntity<Map<String, Object>> getEventoComInscritos(@PathVariable Long id) {
-        Optional<Evento> eventoOpt = eventoService.buscarEventoPorId(id);
-        if (eventoOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Evento evento = eventoOpt.get();
-        List<Usuario> inscritos = evento.getInscritos(); // precisa existir getInscritos() no model Evento
+        Evento evento = eventoService.buscarEventoComInscritos(id);
 
         Map<String, Object> resposta = new HashMap<>();
         resposta.put("id", evento.getId());
         resposta.put("nome", evento.getNome());
-        resposta.put("dataHora", evento.getDataHora());
         resposta.put("descricao", evento.getDescricao());
-        resposta.put("inscritos", inscritos);
+        resposta.put("dataHora", evento.getDataHora());
+        resposta.put("local", evento.getLocal());
+        resposta.put("tipoEvento", evento.getTipoEvento());
+        resposta.put("inscritos", evento.getInscritos()); // agora sempre carregados
 
         return ResponseEntity.ok(resposta);
     }
 
-    @PostMapping("/{id}/inscrever")
-    public ResponseEntity<?> inscreverUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
-        Optional<Evento> eventoOpt = eventoService.buscarEventoPorId(id);
-        if (eventoOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+    // ✅ Corrigido: chama o service para persistir inscrição
+    @PostMapping("/{eventoId}/inscrever/{usuarioId}")
+    public ResponseEntity<Map<String, Object>> inscreverUsuario(
+            @PathVariable Long eventoId,
+            @PathVariable Long usuarioId) {
+        try {
+            eventoService.inscreverUsuario(eventoId, usuarioId);
+
+            // retorna o evento atualizado com inscritos
+            Evento eventoAtualizado = eventoService.buscarEventoComInscritos(eventoId);
+
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("id", eventoAtualizado.getId());
+            resposta.put("nome", eventoAtualizado.getNome());
+            resposta.put("descricao", eventoAtualizado.getDescricao());
+            resposta.put("dataHora", eventoAtualizado.getDataHora());
+            resposta.put("local", eventoAtualizado.getLocal());
+            resposta.put("tipoEvento", eventoAtualizado.getTipoEvento());
+            resposta.put("inscritos", eventoAtualizado.getInscritos());
+
+            return ResponseEntity.ok(resposta);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
         }
-
-        Evento evento = eventoOpt.get();
-
-        boolean jaInscrito = evento.getInscritos().stream()
-                .anyMatch(u -> u.getId() == usuario.getId());
-
-        if (jaInscrito) {
-            return ResponseEntity.badRequest().body("Usuário já está inscrito neste evento.");
-        }
-
-        evento.getInscritos().add(usuario);
-        eventoService.salvarEvento(evento);
-
-        return ResponseEntity.ok("Inscrição realizada com sucesso no evento: " + evento.getNome());
     }
 }
