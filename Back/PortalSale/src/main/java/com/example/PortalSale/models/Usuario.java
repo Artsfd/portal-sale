@@ -2,15 +2,7 @@ package com.example.PortalSale.models;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "usuario")
@@ -18,81 +10,37 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @ManyToMany(mappedBy = "inscritos")
+    private String nome;
+    private String email;
+    private String ra;
+    private String senha;
+    private String role;
+
+    @ManyToMany(mappedBy = "inscritos", fetch = FetchType.LAZY)
     private List<Evento> eventosInscritos = new ArrayList<>();
 
-    @NotEmpty
-    private String nome;
+    public Usuario() {}
 
-    @NotEmpty
-    private String email;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    @NotEmpty
-    @Column(unique = true)
-    private String ra;
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
-    @NotEmpty
-    private String senha;
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    @Column(nullable = false)
-    private String role = "USER";
+    public String getRa() { return ra; }
+    public void setRa(String ra) { this.ra = ra; }
 
-    // Getters e Setters
-    public long getId() {
-        return id;
-    }
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public String getRa() {
-        return ra;
-    }
-
-    public void setRa(String ra) {
-        this.ra = ra;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public List<Evento> getEventosInscritos() {
-        return eventosInscritos;
-    }
-
-    public void setEventosInscritos(List<Evento> eventosInscritos) {
-        this.eventosInscritos = eventosInscritos;
-    }
+    public List<Evento> getEventosInscritos() { return eventosInscritos; }
+    public void setEventosInscritos(List<Evento> eventosInscritos) { this.eventosInscritos = eventosInscritos; }
 }

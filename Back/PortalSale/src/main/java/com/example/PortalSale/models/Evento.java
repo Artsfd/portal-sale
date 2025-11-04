@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.CascadeType;
 
 @Entity
 @Table(name = "eventos")
@@ -30,11 +31,11 @@ public class Evento {
     private String tipoEvento;
     private int vagas;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinTable(
-            name = "evento_usuario",
-            joinColumns = @JoinColumn(name = "evento_id"),
-            inverseJoinColumns = @JoinColumn(name = "usuario_id")
+        name = "evento_usuario",
+        joinColumns = @JoinColumn(name = "evento_id"),
+        inverseJoinColumns = @JoinColumn(name = "usuario_id")
     )
     private List<Usuario> inscritos = new ArrayList<>();
 
@@ -42,7 +43,7 @@ public class Evento {
     }
 
     public Evento(Long id, String nome, String palestrante, String descricao,
-            LocalDateTime dataHora, String local, String tipoEvento, int vagas) {
+                  LocalDateTime dataHora, String local, String tipoEvento, int vagas) {
         this.id = id;
         this.nome = nome;
         this.palestrante = palestrante;
@@ -53,7 +54,8 @@ public class Evento {
         this.vagas = vagas;
     }
 
-    // Getters e setters
+    // ✅ Getters e Setters
+
     public Long getId() {
         return id;
     }
@@ -124,5 +126,32 @@ public class Evento {
 
     public void setInscritos(List<Usuario> inscritos) {
         this.inscritos = inscritos;
+    }
+
+    // ✅ Métodos auxiliares (boas práticas)
+
+    public void adicionarInscrito(Usuario usuario) {
+        if (!this.inscritos.contains(usuario)) {
+            this.inscritos.add(usuario);
+        }
+    }
+
+    public void removerInscrito(Usuario usuario) {
+        this.inscritos.remove(usuario);
+    }
+
+    @Override
+    public String toString() {
+        return "Evento{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", palestrante='" + palestrante + '\'' +
+                ", descricao='" + descricao + '\'' +
+                ", dataHora=" + dataHora +
+                ", local='" + local + '\'' +
+                ", tipoEvento='" + tipoEvento + '\'' +
+                ", vagas=" + vagas +
+                ", inscritos=" + inscritos.size() +
+                '}';
     }
 }

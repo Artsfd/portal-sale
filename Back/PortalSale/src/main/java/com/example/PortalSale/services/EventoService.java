@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.PortalSale.models.Evento;
 import com.example.PortalSale.models.Usuario;
@@ -14,7 +15,7 @@ import com.example.PortalSale.repository.UsuarioRepository;
 public class EventoService {
 
     private final EventoRepository eventoRepository;
-    private final UsuarioRepository usuarioRepository; // necessário para buscar usuário
+    private final UsuarioRepository usuarioRepository;
 
     public EventoService(EventoRepository eventoRepository, UsuarioRepository usuarioRepository) {
         this.eventoRepository = eventoRepository;
@@ -41,12 +42,15 @@ public class EventoService {
         return eventoRepository.findByNomeContainingIgnoreCase(nome);
     }
 
+    /** 🔹 Retorna a lista de usuários inscritos em um evento */
     public List<Usuario> buscarInscritosPorEvento(Long eventoId) {
-        Evento evento = eventoRepository.findById(eventoId)
+        Evento evento = eventoRepository.findByIdWithInscritos(eventoId)
                 .orElseThrow(() -> new RuntimeException("Evento não encontrado"));
         return evento.getInscritos();
     }
 
+    /** 🔹 Inscreve o usuário no evento, validando duplicidade */
+    @Transactional
     public void inscreverUsuario(Long eventoId, Long usuarioId) {
         Evento evento = eventoRepository.findByIdWithInscritos(eventoId)
                 .orElseThrow(() -> new RuntimeException("Evento não encontrado"));
@@ -54,29 +58,21 @@ public class EventoService {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        // Verifica duplicidade usando ID
         boolean jaInscrito = evento.getInscritos().stream()
-                .anyMatch(u -> u.getId() == usuario.getId());
+                .anyMatch(u -> u.getId().equals(usuario.getId()));
 
         if (jaInscrito) {
             throw new RuntimeException("Usuário já inscrito neste evento");
         }
 
-        // Verifica vagas
-        if (evento.getInscritos().size() >= evento.getVagas()) {
-            throw new RuntimeException("Não há vagas disponíveis para este evento");
-        }
-
-        // Adiciona usuário à lista de inscritos
+        // ✅ Adiciona o usuário ao evento
         evento.getInscritos().add(usuario);
-
-        // Salva no banco (inscrição persistida)
-        eventoRepository.save(evento);
+        eventoRepository.saveAndFlush(evento);
     }
 
+    /** 🔹 Busca evento com todos os inscritos carregados */
     public Evento buscarEventoComInscritos(Long id) {
         return eventoRepository.findByIdWithInscritos(id)
                 .orElseThrow(() -> new RuntimeException("Evento não encontrado"));
     }
-
 }
