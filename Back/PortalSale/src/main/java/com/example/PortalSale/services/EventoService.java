@@ -42,14 +42,18 @@ public class EventoService {
         return eventoRepository.findByNomeContainingIgnoreCase(nome);
     }
 
-    /** 🔹 Retorna a lista de usuários inscritos em um evento */
+    /**
+     * 🔹 Retorna a lista de usuários inscritos em um evento
+     */
     public List<Usuario> buscarInscritosPorEvento(Long eventoId) {
         Evento evento = eventoRepository.findByIdWithInscritos(eventoId)
                 .orElseThrow(() -> new RuntimeException("Evento não encontrado"));
         return evento.getInscritos();
     }
 
-    /** 🔹 Inscreve o usuário no evento, validando duplicidade */
+    /**
+     * 🔹 Inscreve o usuário no evento, validando duplicidade
+     */
     @Transactional
     public void inscreverUsuario(Long eventoId, Long usuarioId) {
         Evento evento = eventoRepository.findByIdWithInscritos(eventoId)
@@ -70,9 +74,46 @@ public class EventoService {
         eventoRepository.saveAndFlush(evento);
     }
 
-    /** 🔹 Busca evento com todos os inscritos carregados */
+    /**
+     * 🔹 Busca evento com todos os inscritos carregados
+     */
     public Evento buscarEventoComInscritos(Long id) {
         return eventoRepository.findByIdWithInscritos(id)
                 .orElseThrow(() -> new RuntimeException("Evento não encontrado"));
     }
+
+    // EventoService.java
+    @Transactional
+    public Evento atualizarEvento(Long id, Evento eventoAtualizado) {
+        Evento evento = eventoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Evento não encontrado"));
+
+        evento.setNome(eventoAtualizado.getNome());
+        evento.setDescricao(eventoAtualizado.getDescricao());
+        evento.setDataHora(eventoAtualizado.getDataHora());
+        evento.setLocal(eventoAtualizado.getLocal());
+        evento.setTipoEvento(eventoAtualizado.getTipoEvento());
+        evento.setPalestrante(eventoAtualizado.getPalestrante());
+        evento.setVagas(eventoAtualizado.getVagas());
+
+        return eventoRepository.save(evento);
+    }
+
+    /**
+     * 🔹 Remove a inscrição de um usuário em um evento
+     */
+    @Transactional
+    public void removerInscricao(Long eventoId, Long usuarioId) {
+        Evento evento = eventoRepository.findByIdWithInscritos(eventoId)
+                .orElseThrow(() -> new RuntimeException("Evento não encontrado"));
+
+        boolean removido = evento.getInscritos().removeIf(u -> u.getId().equals(usuarioId));
+
+        if (!removido) {
+            throw new RuntimeException("Usuário não estava inscrito neste evento");
+        }
+
+        eventoRepository.save(evento);
+    }
+
 }

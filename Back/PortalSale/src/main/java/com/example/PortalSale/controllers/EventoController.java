@@ -1,3 +1,4 @@
+// EventoController.java
 package com.example.PortalSale.controllers;
 
 import java.util.HashMap;
@@ -6,7 +7,16 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.PortalSale.models.Evento;
 import com.example.PortalSale.services.EventoService;
@@ -38,6 +48,14 @@ public class EventoController {
         return eventoService.salvarEvento(evento);
     }
 
+    /** ✏️ Atualizar evento existente */
+    @PutMapping("/{id}")
+    public ResponseEntity<Evento> atualizarEvento(@PathVariable Long id, @RequestBody Evento eventoAtualizado) {
+        Evento atualizado = eventoService.atualizarEvento(id, eventoAtualizado);
+        return ResponseEntity.ok(atualizado);
+    }
+
+    /** 🗑️ Excluir evento */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirEvento(@PathVariable Long id) {
         eventoService.excluirEvento(id);
@@ -79,14 +97,20 @@ public class EventoController {
             Map<String, Object> resposta = new HashMap<>();
             resposta.put("id", eventoAtualizado.getId());
             resposta.put("nome", eventoAtualizado.getNome());
-            resposta.put("descricao", eventoAtualizado.getDescricao());
-            resposta.put("dataHora", eventoAtualizado.getDataHora());
-            resposta.put("local", eventoAtualizado.getLocal());
-            resposta.put("tipoEvento", eventoAtualizado.getTipoEvento());
-            resposta.put("palestrante", eventoAtualizado.getPalestrante());
             resposta.put("inscritos", eventoAtualizado.getInscritos());
 
             return ResponseEntity.ok(resposta);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
+        }
+    }
+
+    /** 🔹 Remove a inscrição de um usuário */
+    @DeleteMapping("/{eventoId}/inscritos/{usuarioId}")
+    public ResponseEntity<?> removerInscricao(@PathVariable Long eventoId, @PathVariable Long usuarioId) {
+        try {
+            eventoService.removerInscricao(eventoId, usuarioId);
+            return ResponseEntity.ok(Map.of("mensagem", "Inscrição removida com sucesso"));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
         }
