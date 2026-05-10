@@ -1,0 +1,249 @@
+/* ============================
+   RESET E BASE
+============================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    padding: 20px;
+    color: #1e293b;
+}
+
+/* ============================
+   HEADER
+============================ */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+#logoutButton {
+    padding: 10px 20px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+#logoutButton:hover {
+    background: #b91c1c;
+    transform: translateY(-3px);
+}
+
+/* ============================
+   TÍTULO PRINCIPAL
+============================ */
+h1 {
+    text-align: center;
+    font-size: 32px;
+    color: #1e40af;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+/* ============================
+   BOTÃO CRIAR EVENTO
+============================ */
+#criarEventoButton {
+    display: block;
+    margin: 0 auto 30px auto;
+    padding: 12px 22px;
+    background: #1e40af;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    transition: 0.3s ease;
+}
+
+#criarEventoButton:hover {
+    background: #1e3a8a;
+    transform: translateY(-3px);
+}
+
+/* ============================
+   SEÇÕES
+============================ */
+section {
+    max-width: 900px;
+    margin: 0 auto 40px auto;
+}
+
+section h2,
+section h3 {
+    color: #1e40af;
+    font-size: 24px;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+/* ============================
+   LISTA DE EVENTOS
+============================ */
+#eventosList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.evento-item {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: 0.3s ease;
+    font-size: 15px;
+    color: #1e293b;
+}
+
+.evento-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.15);
+}
+
+/* ============================
+   BOTÕES DENTRO DOS CARDS
+============================ */
+.evento-item button {
+    margin-top: 10px;
+    margin-right: 8px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+/* Botão Detalhes */
+.evento-item button:nth-child(2) {
+    background: #0ea5e9;
+    color: white;
+}
+.evento-item button:nth-child(2):hover {
+    background: #0284c7;
+}
+
+/* Botão Editar */
+.evento-item button:nth-child(3) {
+    background: #4f46e5;
+    color: white;
+}
+.evento-item button:nth-child(3):hover {
+    background: #4338ca;
+}
+
+/* Botão Ver Inscritos */
+.evento-item button:nth-child(4) {
+    background: #059669;
+    color: white;
+}
+.evento-item button:nth-child(4):hover {
+    background: #047857;
+}
+
+/* Botão Excluir */
+.evento-item button:nth-child(5) {
+    background: #dc2626;
+    color: white;
+}
+.evento-item button:nth-child(5):hover {
+    background: #b91c1c;
+}
+
+/* ============================
+   DETALHES DO EVENTO
+============================ */
+#usuariosList {
+    margin-top: 10px;
+}
+
+#usuariosList p {
+    margin-bottom: 8px;
+    background: #f1f5f9;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+/* ============================
+   FORMULÁRIO DE EDIÇÃO
+============================ */
+form label {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+form input,
+form textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0 15px 0;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: white;
+    font-size: 15px;
+}
+
+form textarea {
+    height: 100px;
+    resize: none;
+}
+
+/* Botão Salvar Alterações */
+form button[type="submit"] {
+    background: #1e40af;
+    color: white;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+}
+
+form button[type="submit"]:hover {
+    background: #1e3a8a;
+    transform: translateY(-3px);
+}
+
+/* ============================
+   ANIMAÇÃO
+============================ */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================
+   RESPONSIVIDADE
+============================ */
+@media (max-width: 768px) {
+    #eventosList {
+        grid-template-columns: 1fr;
+    }
+
+    #criarEventoButton {
+        width: 100%;
+        font-size: 18px;
+    }
+
+    section {
+        padding: 0 10px;
+    }
+}
