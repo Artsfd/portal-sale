@@ -1,0 +1,111 @@
+:root {
+  color-scheme: light;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #eef2ff;
+  color: #0f172a;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.historico-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.historico-header h1 {
+  font-size: 28px;
+  color: #1e3a8a;
+}
+
+.historico-back-button {
+  border: none;
+  background: #1e40af;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.historico-back-button:hover {
+  background: #1d4ed8;
+}
+
+.historico-description {
+  margin-bottom: 18px;
+  color: #475569;
+  font-size: 15px;
+  max-width: 760px;
+}
+
+.historico-container {
+  display: grid;
+  gap: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.historico-card {
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  padding: 22px;
+  border: 1px solid #dbeafe;
+}
+
+.historico-card h2 {
+  color: #1e40af;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.historico-card p {
+  color: #334155;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.historico-card .evento-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.historico-card .evento-meta span {
+  background: #e0e7ff;
+  color: #1e3a8a;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.historico-empty {
+  text-align: center;
+  background: white;
+  padding: 28px;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  border: 1px solid #dbeafe;
+  color: #475569;
+}
+
+@media (max-width: 768px) {
+  .historico-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

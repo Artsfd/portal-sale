@@ -64,4 +64,11 @@ public class InscricaoService {
     public boolean verificarInscricaoAtiva(Long eventoId, Long usuarioId) {
         return inscricaoEventoRepository.existsByUsuarioIdAndEventoIdAndStatus(usuarioId, eventoId, StatusInscricao.INSCRITO);
     }
+
+    public java.util.List<Evento> listarEventosInscritos(Long usuarioId) {
+        return inscricaoEventoRepository.findByUsuarioIdAndStatus(usuarioId, StatusInscricao.INSCRITO)
+                .stream()
+                .map(InscricaoEvento::getEvento)
+                .toList();
+    }
 }

@@ -37,11 +37,11 @@
                     Explore nossa programação completa de eventos, palestras e workshops.
                 </p>
                 <div class="events-preview__calendar">
-                    <div class="calendar-icon">
-                        <div class="calendar-icon__header">2025</div>
-                        <div class="calendar-icon__body">
-                            <i class="fas fa-calendar-alt"></i>
+                    <div class="calendar-widget" id="calendarWidget">
+                        <div class="calendar-widget__header">
+                            <span id="calendarMonthYear">Maio 2026</span>
                         </div>
+                        <div class="calendar-widget__grid" id="calendarGrid"></div>
                     </div>
                 </div>
                 <button class="events-preview__button" id="calendarIcon">
@@ -61,9 +61,15 @@
                     </button>
 
                     <!-- Histórico -->
-                    <button class="quick-action">
+                    <button class="quick-action" id="historyButton">
                         <i class="fas fa-history"></i>
                         <span>Histórico</span>
+                    </button>
+
+                    <!-- Sair -->
+                    <button class="quick-action" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Sair</span>
                     </button>
 
                 </div>

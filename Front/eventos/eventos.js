@@ -9,8 +9,57 @@ const backButton = document.getElementById("backButton");
 const filterButtons = document.querySelectorAll(".filter-button");
 const eventCardTemplate = document.getElementById("event-card-template");
 
+function saveAuthToken(token) {
+  localStorage.setItem("token", token);
+  sessionStorage.setItem("token", token);
+  try {
+    window.name = JSON.stringify({ token });
+  } catch (error) {
+    console.warn("Não foi possível salvar token em window.name", error);
+  }
+}
+
 function getAuthToken() {
-  return localStorage.getItem("token");
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromUrl = urlParams.get("token");
+  if (tokenFromUrl) {
+    saveAuthToken(tokenFromUrl);
+    return tokenFromUrl;
+  }
+
+  const tokenFromLocalStorage = localStorage.getItem("token");
+  if (tokenFromLocalStorage) {
+    return tokenFromLocalStorage;
+  }
+
+  const tokenFromSession = sessionStorage.getItem("token");
+  if (tokenFromSession) {
+    localStorage.setItem("token", tokenFromSession);
+    return tokenFromSession;
+  }
+
+  try {
+    const nameData = JSON.parse(window.name || "{}");
+    if (nameData?.token) {
+      saveAuthToken(nameData.token);
+      return nameData.token;
+    }
+  } catch (error) {
+    console.warn("window.name não contém token válido", error);
+  }
+
+  return null;
+}
+
+function clearAuthToken() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  sessionStorage.removeItem("token");
+  try {
+    window.name = "";
+  } catch (error) {
+    console.warn("Não foi possível limpar window.name", error);
+  }
 }
 
 function getAuthHeaders(contentType = "application/json") {
@@ -378,10 +427,12 @@ botaoFavorito.addEventListener("click", () => {
   const horaFim = new Date(evento.horaFim);
   const horaFimMais1 = new Date(horaFim.getTime() + 60 * 60 * 1000);
   
-  if (agora < horaFim || agora > horaFimMais1) {
+  const janelaInicio = horaFim;
+  const janelaFim = horaFimMais1;
+  if (agora < janelaInicio || agora > janelaFim) {
     presencaButton.disabled = true;
     presencaButton.style.opacity = "0.5";
-    presencaButton.title = `Presença disponível entre ${formatarDataHora(evento.dataHora)} e ${formatarDataHora(evento.horaFim)}`;
+    presencaButton.title = `Presença disponível entre ${formatarDataHora(janelaInicio)} e ${formatarDataHora(janelaFim)}`;
   }
   
   presencaButton.addEventListener("click", async () => {
@@ -392,7 +443,7 @@ botaoFavorito.addEventListener("click", () => {
       const horaFimMais1 = new Date(horaFim.getTime() + 60 * 60 * 1000);
 
       if (agora < horaFim || agora > horaFimMais1) {
-        throw new Error(`Presença só pode ser confirmada entre ${formatarDataHora(evento.horaFim)} e ${formatarDataHora(horaFimMais1.toISOString())}`);
+        throw new Error(`Presença só pode ser confirmada entre ${formatarDataHora(horaFim)} e ${formatarDataHora(horaFimMais1)}`);
       }
 
       const codigoRecebido = await solicitarCodigoCheckin(evento.id);
@@ -417,6 +468,7 @@ botaoFavorito.addEventListener("click", () => {
   const signupButton = card.querySelector(".event-card__signup-button");
   // Verificar status de inscrição do usuário
   verificarStatusInscricao(evento.id, signupButton, vagasRestantes, evento.dataHora);
+  verificarPresencaConfirmada(evento.id, card, presencaButton, status);
   signupButton.addEventListener("click", () => inscreverEvento(evento.id, signupButton));
 
   // Adiciona delay para animação
@@ -618,6 +670,35 @@ function verificarStatusInscricao(eventoId, botao, vagasRestantes, dataHora) {
     .catch(error => {
       console.error("Erro ao verificar status de inscrição:", error);
       // Em caso de erro, manter botão habilitado
+    });
+}
+
+function verificarPresencaConfirmada(eventoId, card, presencaButton, status) {
+  if (!getAuthToken()) return;
+
+  fetch(`http://localhost:8080/eventos/${eventoId}/presenca/status`, {
+    headers: getAuthHeaders()
+  })
+    .then(async response => {
+      if (!response.ok) {
+        throw new Error(`Status de presença não disponível: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.presente) {
+        card.classList.add("event-card--confirmed");
+        status.textContent = "Presença confirmada";
+        status.classList.remove("event-card__status--available", "event-card__status--limited");
+        status.classList.add("event-card__status--confirmed");
+        presencaButton.disabled = true;
+        presencaButton.style.opacity = "0.5";
+        const texto = presencaButton.querySelector(".button-text");
+        if (texto) texto.textContent = "Confirmada";
+      }
+    })
+    .catch(error => {
+      console.error("Erro ao verificar status de presença:", error);
     });
 }
 

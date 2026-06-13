@@ -155,6 +155,10 @@ public class PresencaService {
         return presencaEventoRepository.findByInscricaoEvento_EventoId(eventoId);
     }
 
+    public boolean usuarioConfirmouPresenca(Long eventoId, Long usuarioId) {
+        return presencaEventoRepository.existsByInscricaoEvento_UsuarioIdAndInscricaoEvento_EventoId(usuarioId, eventoId);
+    }
+
     private InscricaoEvento obterInscricaoAtiva(Long eventoId, Long usuarioId, String email) {
         if (usuarioId != null) {
             return inscricaoEventoRepository.findByUsuarioIdAndEventoIdAndStatus(usuarioId, eventoId, StatusInscricao.INSCRITO)

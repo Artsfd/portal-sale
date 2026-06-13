@@ -1,5 +1,59 @@
+function saveAuthData(token, role) {
+  localStorage.setItem("token", token);
+  localStorage.setItem("role", role);
+  sessionStorage.setItem("token", token);
+  sessionStorage.setItem("role", role);
+  try {
+    window.name = JSON.stringify({ token, role });
+  } catch (error) {
+    console.warn("Não foi possível salvar token em window.name", error);
+  }
+}
+
 function getAuthToken() {
-  return localStorage.getItem("token");
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromUrl = urlParams.get("token");
+  if (tokenFromUrl) {
+    const roleFromUrl = urlParams.get("role") || localStorage.getItem("role") || sessionStorage.getItem("role");
+    saveAuthData(tokenFromUrl, roleFromUrl || "ADMIN");
+    return tokenFromUrl;
+  }
+
+  const tokenFromLocalStorage = localStorage.getItem("token");
+  if (tokenFromLocalStorage) {
+    return tokenFromLocalStorage;
+  }
+
+  const tokenFromSession = sessionStorage.getItem("token");
+  if (tokenFromSession) {
+    localStorage.setItem("token", tokenFromSession);
+    localStorage.setItem("role", sessionStorage.getItem("role") || localStorage.getItem("role") || "ADMIN");
+    return tokenFromSession;
+  }
+
+  try {
+    const nameData = JSON.parse(window.name || "{}");
+    if (nameData?.token) {
+      saveAuthToken(nameData.token);
+      return nameData.token;
+    }
+  } catch (error) {
+    console.warn("window.name não contém token válido", error);
+  }
+
+  return null;
+}
+
+function clearAuthToken() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("role");
+  try {
+    window.name = "";
+  } catch (error) {
+    console.warn("Não foi possível limpar window.name", error);
+  }
 }
 
 function getAuthHeaders(contentType = "application/json") {
@@ -9,6 +63,29 @@ function getAuthHeaders(contentType = "application/json") {
     headers["Authorization"] = `Bearer ${token}`;
   }
   return headers;
+}
+
+function getAuthRole() {
+  const roleFromLocalStorage = localStorage.getItem("role");
+  if (roleFromLocalStorage) return roleFromLocalStorage;
+
+  const roleFromSession = sessionStorage.getItem("role");
+  if (roleFromSession) {
+    localStorage.setItem("role", roleFromSession);
+    return roleFromSession;
+  }
+
+  try {
+    const nameData = JSON.parse(window.name || "{}");
+    if (nameData?.role) {
+      localStorage.setItem("role", nameData.role);
+      sessionStorage.setItem("role", nameData.role);
+      return nameData.role;
+    }
+  } catch (error) {
+    console.warn("window.name não contém role válido", error);
+  }
+  return null;
 }
 
 function formatarDataHora(valor) {
@@ -129,8 +206,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const criarEventoButton = document.getElementById("criarEventoButton");
   const logoutButton = document.getElementById("logoutButton");
 
-  const role = localStorage.getItem("role");
   const token = getAuthToken();
+  const role = getAuthRole();
 
   if (!token || role !== "ADMIN") {
     mostrarModalMensagem("Acesso negado. Faça login como administrador.", "erro");
@@ -143,8 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 🚪 LOGOUT
   logoutButton.addEventListener("click", () => {
     localStorage.removeItem("usuarioLogado");
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    clearAuthToken();
     window.location.href = "../login/login.html";
   });
 

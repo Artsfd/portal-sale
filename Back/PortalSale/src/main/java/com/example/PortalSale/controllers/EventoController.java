@@ -70,6 +70,22 @@ public class EventoController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{id}/presenca/status")
+    public ResponseEntity<Map<String, Object>> verificarStatusPresenca(@PathVariable Long id,
+                                                                       @AuthenticationPrincipal ApplicationUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        boolean presente = presencaService.usuarioConfirmouPresenca(id, userDetails.getId());
+        Map<String, Object> response = Map.of(
+            "presente", presente,
+            "eventoId", id,
+            "usuarioId", userDetails.getId()
+        );
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/{id}/inscricao")
     public ResponseEntity<?> inscreverEvento(@PathVariable Long id,
                                              @AuthenticationPrincipal ApplicationUserDetails userDetails) {
@@ -88,6 +104,14 @@ public class EventoController {
     @GetMapping("/{id}/vagas-disponiveis")
     public ResponseEntity<Integer> vagasDisponiveis(@PathVariable Long id) {
         return ResponseEntity.ok(eventoService.vagasDisponiveis(id));
+    }
+
+    @GetMapping("/inscricoes/me")
+    public ResponseEntity<java.util.List<Evento>> listarEventosInscritos(@AuthenticationPrincipal ApplicationUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(inscricaoService.listarEventosInscritos(userDetails.getId()));
     }
 
     @PostMapping("/{id}/checkin/solicitar-codigo")

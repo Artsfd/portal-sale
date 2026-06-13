@@ -2,9 +2,116 @@
 const loginButton = document.getElementById("loginButton");
 const forgotPassword = document.getElementById("forgotPassword");
 const calendarIcon = document.getElementById("calendarIcon");
+const historyButton = document.getElementById("historyButton");
+const logoutButton = document.getElementById("logoutButton");
 const markEventsButton = document.getElementById("markEventsButton");
 const matriculaInput = document.getElementById("matricula");
 const senhaInput = document.getElementById("senha");
+const calendarGrid = document.getElementById("calendarGrid");
+const calendarMonthYear = document.getElementById("calendarMonthYear");
+
+function saveAuthData(token, role) {
+  localStorage.setItem("token", token);
+  localStorage.setItem("role", role);
+  sessionStorage.setItem("token", token);
+  sessionStorage.setItem("role", role);
+  try {
+    window.name = JSON.stringify({ token, role });
+  } catch (error) {
+    console.warn("Não foi possível salvar token em window.name", error);
+  }
+}
+
+function getAuthToken() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromUrl = urlParams.get("token");
+  if (tokenFromUrl) {
+    const roleFromUrl = urlParams.get("role") || localStorage.getItem("role") || sessionStorage.getItem("role");
+    saveAuthData(tokenFromUrl, roleFromUrl || localStorage.getItem("role") || sessionStorage.getItem("role") || "USER");
+    return tokenFromUrl;
+  }
+
+  const tokenFromLocalStorage = localStorage.getItem("token");
+  if (tokenFromLocalStorage) {
+    return tokenFromLocalStorage;
+  }
+
+  const tokenFromSession = sessionStorage.getItem("token");
+  if (tokenFromSession) {
+    localStorage.setItem("token", tokenFromSession);
+    localStorage.setItem("role", sessionStorage.getItem("role") || localStorage.getItem("role") || "USER");
+    return tokenFromSession;
+  }
+
+  try {
+    const nameData = JSON.parse(window.name || "{}");
+    if (nameData?.token) {
+      saveAuthData(nameData.token, nameData.role || localStorage.getItem("role") || sessionStorage.getItem("role") || "USER");
+      return nameData.token;
+    }
+  } catch (error) {
+    console.warn("window.name não contém token válido", error);
+  }
+
+  return null;
+}
+
+function getAuthRole() {
+  const roleFromLocalStorage = localStorage.getItem("role");
+  if (roleFromLocalStorage) return roleFromLocalStorage;
+
+  const roleFromSession = sessionStorage.getItem("role");
+  if (roleFromSession) {
+    localStorage.setItem("role", roleFromSession);
+    return roleFromSession;
+  }
+
+  try {
+    const nameData = JSON.parse(window.name || "{}");
+    if (nameData?.role) {
+      sessionStorage.setItem("role", nameData.role);
+      localStorage.setItem("role", nameData.role);
+      return nameData.role;
+    }
+  } catch (error) {
+    console.warn("window.name não contém role válido", error);
+  }
+  return null;
+}
+
+function clearAuthToken() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("role");
+  try {
+    window.name = "";
+  } catch (error) {
+    console.warn("Não foi possível limpar window.name", error);
+  }
+}
+
+function logout() {
+  clearAuthToken();
+  window.location.href = "login.html";
+}
+
+function addTokenToUrl(url) {
+  const token = getAuthToken();
+  return token ? `${url}?token=${encodeURIComponent(token)}` : url;
+}
+
+function formatarDataHora(valor) {
+  if (!valor) return "N/A";
+  const data = new Date(valor);
+  if (Number.isNaN(data.getTime())) {
+    return valor;
+  }
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short"
+  }).format(data);
+}
 
 function validarLogin() {
   const ra = matriculaInput.value;
@@ -30,13 +137,13 @@ function validarLogin() {
     })
     .then(usuario => {
       // Salva token e role
-      localStorage.setItem("token", usuario.token);
-      localStorage.setItem("role", usuario.role);
+      saveAuthData(usuario.token, usuario.role);
 
       if (usuario.role === "ADMIN") {
         window.location.href = "../admin/admin.html";
       } else {
         mostrarPainelPrincipal();
+        carregarCalendarioEventos();
         window.location.hash = "dashboard";
       }
     })
@@ -147,13 +254,155 @@ function mostrarPainelPrincipal() {
   document.querySelector(".main").style.display = "block";
 }
 
+function obterEventosMesAtual(eventos) {
+  const agora = new Date();
+  const mesAtual = agora.getMonth();
+  const anoAtual = agora.getFullYear();
+  return eventos.filter(evento => {
+    const data = new Date(evento.dataHora);
+    return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
+  });
+}
+
+function renderizarCalendario(eventos) {
+  if (!calendarGrid || !calendarMonthYear) return;
+
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = agora.getMonth();
+  const nomeMes = agora.toLocaleDateString('pt-BR', { month: 'long' });
+  calendarMonthYear.textContent = `${nomeMes.charAt(0).toUpperCase()}${nomeMes.slice(1)} ${ano}`;
+
+  const primeiroDia = new Date(ano, mes, 1);
+  const diaSemanaInicio = primeiroDia.getDay();
+  const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+  const diasSemana = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+
+  calendarGrid.innerHTML = '';
+
+  diasSemana.forEach(dia => {
+    const cabecalho = document.createElement('div');
+    cabecalho.className = 'calendar-widget__weekday';
+    cabecalho.textContent = dia;
+    calendarGrid.appendChild(cabecalho);
+  });
+
+  const eventosDoMes = obterEventosMesAtual(eventos);
+  const dadosEventosPorDia = eventosDoMes.reduce((map, evento) => {
+    const data = new Date(evento.dataHora);
+    const dia = data.getDate();
+    const lista = map.get(dia) || [];
+    lista.push({
+      nome: evento.nome,
+      dataHora: evento.dataHora,
+      horaFim: evento.horaFim
+    });
+    map.set(dia, lista);
+    return map;
+  }, new Map());
+
+  const tooltip = document.querySelector('.calendar-tooltip') || document.createElement('div');
+  tooltip.className = 'calendar-tooltip hidden';
+  if (!document.body.contains(tooltip)) {
+    document.body.appendChild(tooltip);
+  }
+
+  for (let i = 0; i < diaSemanaInicio; i += 1) {
+    const celula = document.createElement('div');
+    celula.className = 'calendar-widget__day calendar-widget__day--other-month';
+    calendarGrid.appendChild(celula);
+  }
+
+  for (let dia = 1; dia <= diasNoMes; dia += 1) {
+    const celula = document.createElement('div');
+    celula.className = 'calendar-widget__day';
+
+    const numero = document.createElement('span');
+    numero.className = 'calendar-widget__date';
+    numero.textContent = dia;
+    celula.appendChild(numero);
+
+    const eventosDoDia = dadosEventosPorDia.get(dia) || [];
+    if (eventosDoDia.length > 0) {
+      celula.classList.add('calendar-widget__day--has-events');
+
+      const eventosLista = document.createElement('div');
+      eventosLista.className = 'calendar-widget__events';
+      eventosDoDia.slice(0, 2).forEach(evento => {
+        const item = document.createElement('div');
+        item.className = 'calendar-widget__event';
+        item.textContent = evento.nome;
+        eventosLista.appendChild(item);
+      });
+      if (eventosDoDia.length > 2) {
+        const mais = document.createElement('div');
+        mais.className = 'calendar-widget__event';
+        mais.textContent = `+${eventosDoDia.length - 2} mais`;
+        eventosLista.appendChild(mais);
+      }
+      celula.appendChild(eventosLista);
+
+      celula.addEventListener('mouseenter', () => {
+        const conteudo = eventosDoDia
+          .map(ev => `
+            <div class="calendar-tooltip__item">
+              <strong>${ev.nome}</strong>
+              <span>${formatarDataHora(ev.dataHora)} – ${formatarDataHora(ev.horaFim)}</span>
+            </div>
+          `)
+          .join('');
+        tooltip.innerHTML = conteudo;
+        const rect = celula.getBoundingClientRect();
+        tooltip.style.left = `${Math.min(rect.left + window.scrollX, window.innerWidth - 320)}px`;
+        tooltip.style.top = `${rect.bottom + window.scrollY + 8}px`;
+        tooltip.classList.remove('hidden');
+      });
+
+      celula.addEventListener('mouseleave', () => {
+        tooltip.classList.add('hidden');
+      });
+    }
+
+    calendarGrid.appendChild(celula);
+  }
+
+  if (eventosDoMes.length === 0) {
+    const vazio = document.createElement('div');
+    vazio.className = 'calendar-widget__empty';
+    vazio.textContent = 'Nenhum evento agendado para este mês.';
+    calendarGrid.appendChild(vazio);
+  }
+}
+
+function carregarCalendarioEventos() {
+  if (!calendarGrid || !calendarMonthYear) return;
+
+  fetch('http://localhost:8080/eventos')
+    .then(async res => {
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(text || `HTTP ${res.status}`);
+      }
+      return res.json();
+    })
+    .then(eventos => renderizarCalendario(eventos))
+    .catch(error => {
+      console.error('Erro ao carregar eventos para o calendário:', error);
+      calendarGrid.innerHTML = '<div class="calendar-widget__empty">Não foi possível carregar o calendário.</div>';
+    });
+}
+
 // Redirecionamentos do painel
 function redirecionarParaEventos() {
-  window.location.href = "../eventos/eventos_novo.html#dashboard";
+  window.location.href = addTokenToUrl("../eventos/eventos_novo.html#dashboard");
+}
+
+function redirecionarParaHistorico() {
+  window.location.href = addTokenToUrl("../historico/historico.html");
 }
 
 function redirecionarParaMarcarEventos() {
-  window.location.href = "../cadastro/cadastro.html#dashboard";
+  window.location.href = addTokenToUrl("../cadastro/cadastro.html#dashboard");
 }
 
 function atualizarEstatisticas() {
@@ -173,7 +422,15 @@ forgotPassword.addEventListener("click", () => {
   mostrarMensagem("Para recuperar sua senha, envie um email para a secretaria.", "aviso");
 });
 calendarIcon.addEventListener("click", redirecionarParaEventos);
-markEventsButton.addEventListener("click", redirecionarParaMarcarEventos);
+if (historyButton) {
+  historyButton.addEventListener("click", redirecionarParaHistorico);
+}
+if (logoutButton) {
+  logoutButton.addEventListener("click", logout);
+}
+if (markEventsButton) {
+  markEventsButton.addEventListener("click", redirecionarParaMarcarEventos);
+}
 
 // Enter para logar
 senhaInput.addEventListener("keypress", (event) => {
@@ -181,8 +438,23 @@ senhaInput.addEventListener("keypress", (event) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  const token = getAuthToken();
+  const role = getAuthRole();
+
+  if (token) {
+    if (role === "ADMIN") {
+      window.location.href = "../admin/admin.html";
+      return;
+    }
+    mostrarPainelPrincipal();
+    atualizarEstatisticas();
+    carregarCalendarioEventos();
+    return;
+  }
+
   if (window.location.hash === "#dashboard") {
     mostrarPainelPrincipal();
     atualizarEstatisticas();
+    carregarCalendarioEventos();
   }
 });

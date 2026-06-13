@@ -2,6 +2,80 @@
  * Arquivo JavaScript para cadastro de eventos
  */
 
+function saveAuthToken(token) {
+  localStorage.setItem("token", token);
+  sessionStorage.setItem("token", token);
+  try {
+    window.name = JSON.stringify({ token });
+  } catch (error) {
+    console.warn("Não foi possível salvar token em window.name", error);
+  }
+}
+
+function getAuthToken() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromUrl = urlParams.get("token");
+  if (tokenFromUrl) {
+    saveAuthToken(tokenFromUrl);
+    return tokenFromUrl;
+  }
+
+  const tokenFromLocalStorage = localStorage.getItem("token");
+  if (tokenFromLocalStorage) {
+    return tokenFromLocalStorage;
+  }
+
+  const tokenFromSession = sessionStorage.getItem("token");
+  if (tokenFromSession) {
+    localStorage.setItem("token", tokenFromSession);
+    return tokenFromSession;
+  }
+
+  try {
+    const nameData = JSON.parse(window.name || "{}");
+    if (nameData?.token) {
+      saveAuthToken(nameData.token);
+      return nameData.token;
+    }
+  } catch (error) {
+    console.warn("window.name não contém token válido", error);
+  }
+
+  return null;
+}
+
+function getAuthHeaders(contentType = "application/json") {
+  const token = getAuthToken();
+  const headers = { "Content-Type": contentType };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+function getAuthRole() {
+  const roleFromLocalStorage = localStorage.getItem("role");
+  if (roleFromLocalStorage) return roleFromLocalStorage;
+
+  const roleFromSession = sessionStorage.getItem("role");
+  if (roleFromSession) {
+    localStorage.setItem("role", roleFromSession);
+    return roleFromSession;
+  }
+
+  try {
+    const nameData = JSON.parse(window.name || "{}");
+    if (nameData?.role) {
+      localStorage.setItem("role", nameData.role);
+      sessionStorage.setItem("role", nameData.role);
+      return nameData.role;
+    }
+  } catch (error) {
+    console.warn("window.name não contém role válido", error);
+  }
+  return null;
+}
+
 function mostrarModalMensagem(msg, tipo = "info") {
   return new Promise((resolve) => {
     const overlay = document.createElement('div');
@@ -105,8 +179,8 @@ function mostrarModalMensagem(msg, tipo = "info") {
 document.addEventListener("DOMContentLoaded", () => {
 
   // 🔒 Somente ADMIN pode acessar
-  const role = localStorage.getItem("role");
-  const token = localStorage.getItem("token");
+  const token = getAuthToken();
+  const role = getAuthRole();
 
   if (!token || role !== "ADMIN") {
     mostrarModalMensagem("Acesso negado! Apenas administradores podem cadastrar eventos.", "erro");

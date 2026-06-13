@@ -210,6 +210,15 @@ body {
     color: #ea580c;
 }
 
+.event-card__status--confirmed {
+    color: #16a34a;
+    font-weight: 700;
+}
+
+.event-card--confirmed {
+    border: 2px solid #16a34a;
+}
+
 .event-card__button {
     display: inline-flex;
     align-items: center;
