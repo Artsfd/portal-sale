@@ -71,15 +71,14 @@
     border-radius: 5px;
   }
   
-  .cadastro__label {
-    text-align: left;
-    font-size: 14px;
-    font-weight: bold;
-    color: #1e3a8a;
-    margin-top: 10px;
-    display: block;
+  .cadastro__textarea {
+    min-height: 100px;
+    resize: vertical;
   }
-
+  
+  .cadastro__button {
+    width: 100%;
+    padding: 10px;
     background: #dc2626;
     color: white;
     border: none;
@@ -132,5 +131,3 @@
     background: white;
     font-size: 16px;
 }
-
-  

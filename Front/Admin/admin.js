@@ -404,5 +404,5 @@ function excluirEvento(id) {
     .catch(err => {
       console.error("Erro ao excluir:", err);
       alert("Falha ao excluir evento.");
-    });
+    })
 }

@@ -138,7 +138,8 @@ function carregarHistorico() {
 }
 
 backButton.addEventListener("click", () => {
-  window.location.href = addTokenToUrl("../login/login.html#dashboard");
+  // Volta para login.html que vai validar o token e exibir o painel se válido
+  window.location.href = addTokenToUrl("../login/login.html");
 });
 
 window.addEventListener("DOMContentLoaded", carregarHistorico);

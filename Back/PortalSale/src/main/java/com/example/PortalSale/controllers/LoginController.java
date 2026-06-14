@@ -14,6 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/auth")
@@ -51,6 +53,32 @@ public class LoginController {
             ));
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(401).body(Map.of("mensagem", "Credenciais inválidas"));
+        }
+    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            
+            if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() instanceof String && authentication.getPrincipal().equals("anonymousUser")) {
+                return ResponseEntity.status(401).body(Map.of("mensagem", "Token inválido ou expirado"));
+            }
+
+            if (authentication.getPrincipal() instanceof ApplicationUserDetails) {
+                ApplicationUserDetails userDetails = (ApplicationUserDetails) authentication.getPrincipal();
+                return ResponseEntity.ok(Map.of(
+                        "valido", true,
+                        "id", userDetails.getId(),
+                        "nome", userDetails.getUsuario().getNome(),
+                        "ra", userDetails.getUsername(),
+                        "role", userDetails.getAuthorities().stream().findFirst().map(Object::toString).orElse("USER")
+                ));
+            }
+
+            return ResponseEntity.status(401).body(Map.of("mensagem", "Token inválido"));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("mensagem", "Erro ao validar token: " + e.getMessage()));
         }
     }
 

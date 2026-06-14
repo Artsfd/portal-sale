@@ -437,24 +437,46 @@ senhaInput.addEventListener("keypress", (event) => {
   if (event.key === "Enter") validarLogin();
 });
 
+// Único DOMContentLoaded que cuida de toda a lógica de inicialização
 document.addEventListener("DOMContentLoaded", () => {
   const token = getAuthToken();
   const role = getAuthRole();
 
+  // Se há um token, valida no servidor antes de conceder acesso
   if (token) {
-    if (role === "ADMIN") {
-      window.location.href = "../admin/admin.html";
-      return;
-    }
-    mostrarPainelPrincipal();
-    atualizarEstatisticas();
-    carregarCalendarioEventos();
+    fetch("http://localhost:8080/auth/validate", {
+      method: "GET",
+      headers: { 
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json" 
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Token inválido ou expirado");
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Token válido
+      if (role === "ADMIN") {
+        window.location.href = "../admin/admin.html";
+        return;
+      }
+      // Mostra o painel principal com o calendário e estatísticas
+      mostrarPainelPrincipal();
+      atualizarEstatisticas();
+      carregarCalendarioEventos();
+    })
+    .catch(error => {
+      // Token inválido, limpa e mostra login
+      clearAuthToken();
+      console.warn("Token validation failed:", error.message);
+      // Deixa o formulário de login visível (estado padrão)
+    });
     return;
   }
 
-  if (window.location.hash === "#dashboard") {
-    mostrarPainelPrincipal();
-    atualizarEstatisticas();
-    carregarCalendarioEventos();
-  }
+  // Se não há token, mostra apenas o formulário de login
+  // O painel principal só aparece após autenticação válida
 });

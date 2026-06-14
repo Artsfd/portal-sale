@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Arquivo JavaScript específico para a página eventos.html
  * Contém funcionalidades para exibição e interação com eventos
  */
@@ -624,7 +624,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const backButton = document.getElementById("backButton");
   if (backButton) {
     backButton.addEventListener("click", () => {
-      window.location.href = "../login/login.html#dashboard";
+      // Volta para login.html que vai exibir o painel principal se o token for válido
+      window.location.href = "../login/login.html";
     });
   }
 });
