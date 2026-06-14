@@ -1,0 +1,12 @@
+target
+*.log
+*.tmp
+*.swp
+.idea
+.vscode
+*.iml
+**/node_modules
+**/target
+**/.git
+**/.github
+**/.DS_Store
